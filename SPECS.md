@@ -53,21 +53,22 @@ The Adafruit RP2040 Prop-Maker Feather integrates an RP2040 MCU, 8 MB QSPI Flash
 
 ## 3. Flash Memory Map & Partitioning
 
-The board contains 8 Megabytes (8,388,608 bytes) of QSPI Flash. The flash memory layout is strictly partitioned as follows:
+The board contains 8 Megabytes (8,388,608 bytes) of QSPI Flash. With `board_build.filesystem_size = 6m` configured in PlatformIO, the flash memory is partitioned by the Earle Philhower core linker script as follows:
 
 ```
-0x10000000 +---------------------------------------------------------+ 0 MB
+0x10000000 +---------------------------------------------------------+ 0.0 MB
            | RP2040 BootROM Stage 2 & Vector Table (256 B)           |
            +---------------------------------------------------------+
            | ezpropkit Firmware Binary (C Runtime, Lua VM, Decoders) |
-           | Allocated: 1.5 MB (1,572,864 bytes)                     |
-0x10180000 +---------------------------------------------------------+ 1.5 MB
-           | Reserved for NVM Settings / Crash Dump (64 KB)          |
-0x10190000 +---------------------------------------------------------+ 1.5625 MB
-           | User Storage FAT16/FAT32 Partition                      |
+           | Allocated / Max Sketch: ~2.0 MB (2,093,056 bytes)       |
+           | Current firmware usage: ~338 KB (16.2% of sketch area)  |
+0x101FF000 +---------------------------------------------------------+ ~2.0 MB (_FS_start)
+           | User Storage FAT Filesystem (FatFS)                     |
            | Exposed as USB Mass Storage (MSC) Volume: 'EZPROPKIT'   |
-           | Size: ~6.43 MB (6,750,208 bytes)                        |
+           | Size: exactly 6.00 MB (6,291,456 bytes / 12,288 sectors)|
            | Contents: code.lua, main.lua, sound files (.wav/.mp3)   |
+0x107FF000 +---------------------------------------------------------+ ~7.996 MB (_FS_end / _EEPROM_start)
+           | Reserved for EEPROM Emulation (4 KB / 1 Flash Sector)   |
 0x10800000 +---------------------------------------------------------+ 8.0 MB
 ```
 
