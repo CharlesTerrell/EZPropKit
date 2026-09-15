@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# 2026-09-14 Charles Terrell
+# (probably not copyrightable)
+
+# Shell script to convert a list of sound files to podcast-style MP3
+# for use with github.com/earlephilhower/BackgroundAudio
+
+# Adapted from Google AI Overview, search box prompt:
+# ffmpeg convert to lame mp3 64kbps joint stereo bash script loop across command line args
+
+# At first I was looking only for quick reminders of ffmpeg command line
+# args and how to pass file names into bash. But after a few iterations
+# it produced the script I wanted to write. So I just stole it.
+
+# I don't know where Google got this code. Probably stack overflow.
+
+
+# Check if at least one file was provided
+if [ $# -eq 0 ]; then
+    echo "Usage: $0 file1.wav file2.flac ..."
+    exit 1
+fi
+
+# Loop through all arguments provided to the command line
+for input_file in "$@"; do
+    # Ensure the file actually exists
+    if [ -f "$input_file" ]; then
+        # Extract the file name without its extension
+        filename="${input_file%.*}"
+        
+        echo "Processing: $input_file"
+        
+        # Convert to 64kbps MP3 with Joint Stereo (-ac 2 forces stereo, LAME defaults to joint stereo)
+        ffmpeg -i "$input_file" -c:a libmp3lame -b:a 64k -ac 2 "$filename.mp3"
+    else
+        echo "Error: File '$input_file' not found, skipping."
+    fi
+done
+
+echo "All conversions complete!"
