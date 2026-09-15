@@ -1,14 +1,21 @@
 # ezpropkit: Lua & C Firmware for Adafruit RP2040 Prop-Maker Feather
 
-`ezpropkit` is an open-source, dual-core firmware engine designed for rapid prototyping of animatronics and costume props using the **Adafruit RP2040 Prop-Maker Feather**.
+`EZPropKit` is an open-source, dual-core firmware engine designed for rapid prototyping of animatronics and costume props using the **Adafruit RP2040 Prop-Maker Feather**. [More info from Adafruit](https://learn.adafruit.com/adafruit-rp2040-prop-maker-feather) These boards have several useful features included for a reasonably low price (US$20 in 2026). Support for other boards with similar feature sets can be added as needed.
 
-It delivers a CircuitPython-like workflow powered by **Lua 5.4**:
-1. Connect the board via USB—it mounts as a standard flash drive named `EZPROPKIT`.
-2. Drag and drop audio files (`.wav`, `.mp3`) and Lua scripts (`code.lua` or `main.lua`).
+It delivers a CircuitPython-like workflow using **Lua 5.4**:
+1. Connect the board via USB: it mounts as a standard flash drive named `EZPROPKIT`
+2. Drag and drop audio files (`.wav`, `.mp3`) and Lua scripts (`code.lua` or `main.lua`)
 3. Edit scripts in place. When you save, the board automatically detects write completion and hot-reloads your code.
 4. If a script encounters a runtime error, the board remains mounted over USB, pulses the onboard NeoPixel red/orange, and prints a stack trace to the USB serial console (`115200 baud`).
 
 Under the hood, **Core 0** runs the USB stack and interpreted Lua VM, while **Core 1** runs an optimized C engine handling I2S audio decoding/DMA, PIO NeoPixel generation, and servo timing without jitter.
+
+Lua was chosen for the user code interpreter because:
+- Lua is relatively easy to integrate with C/C++ libraries
+- Its syntax is easy to learn and read
+- Python has already been done
+
+This project was also intended as a learning exercise in using AI agent workflows. The initial code was planned and implemented by Gemini under the close supervision of the project's creator, a long-time programmer in C-like languages. This workflow allowed the project to go from idea to working prototype in less than a week. There were several informative technical conversations along the way about why certain changes were necessary and which features could fit in the RP2040's limited memory. The human then examined the core source code, fleshed out the Lua examples, and rewrote large parts of the documentation. `AI_POLICY.md` has info about use of AI tools for future contributions.
 
 ---
 
@@ -41,12 +48,13 @@ Compiler Flags: `-O3 -DUSE_TINYUSB`
 
 ## User Workflow (Prop Makers)
 
-Prop makers do **not** need to compile code or install toolchains:
+Prop makers do **not** need to compile code or install toolchains. To install:
 
-1. Flash the pre-compiled `ezpropkit-feather-rp2040.uf2` by holding the board's `BOOT` button while plugging in USB.
-2. The drive `EZPROPKIT` appears on your Mac, Windows, or Linux system.
-3. Place your sound files (`blaster.wav`, `hum.mp3`) onto the root of `EZPROPKIT`.
-4. Create or edit `code.lua`:
+1. Hold the board's `BOOT` button while plugging it into your computer with a USB cable. Release the button after plugging it in.
+1. The drive `RPI-RP2` appears on your computer. Drag the pre-compiled `ezpropkit-feather-rp2040.uf2` onto the root of `RPI-RP2`. If it doesn't work, check to be sure the cable can handle data and not just charging. Adafruit's [CircuitPython Quickstart](https://learn.adafruit.com/adafruit-rp2040-prop-maker-feather/circuitpython) page has more info about flashing firmware images.
+2. After the firmware image finishes copying, `RPI-RP2` will disappear and be replaced with a drive named `EZPROPKIT`.
+3. Copy (drag-drop or 'cp') your project's sound files (`blast.wav`, `powerup.mp3`) onto the root of `EZPROPKIT`.
+4. Create or edit `code.lua` on EXPROPKIT on EXPROPKIT. For example, this can be found (with the sound files listed above) in `examples/readme-example`:
 
 ```lua
 -- Simple interactive prop example
@@ -54,6 +62,7 @@ prop.led.on()
 prop.power.enable() -- Powers 5V boost rail, amp, and external LEDs
 
 -- Initialize 16 external NeoPixels on the terminal block
+-- (16 LEDs in my neopixel ring; change to match how many are in yours)
 local strip = prop.neopixel.init(16)
 strip:fill(0, 100, 255)
 strip:show()
@@ -64,7 +73,7 @@ prop.audio.play("powerup.mp3")
 -- Listen to the screw-terminal button
 while true do
     if prop.button.pressed() then
-        prop.audio.play("blast.wav")
+        prop.audio.play("blaster.wav")
         strip:fill(255, 50, 0)
         strip:show()
         prop.time.sleep_ms(150)
@@ -182,4 +191,13 @@ If running development agents or the Antigravity CLI within Docker:
 * **TinyUSB** (USB MSC & CDC device stack): MIT License
 * **FatFS** (FAT12/16/32 filesystem library): ChaN FatFS License
 
-Due to the inclusion of `BackgroundAudio`, the compiled binary of `ezpropkit` is distributed under the **GNU General Public License v3.0 (GPL-3.0)**.
+Due to the inclusion of `BackgroundAudio` (GPL v3) and `arduino-pico` (statically linked LGPL 2.1), the compiled binary of `ezpropkit` is distributed under the **GNU General Public License v3.0 (GPL-3.0)**. `LICENSE` has the license text. For simplicity the project's source code files are also under GPL v3 with these exceptions:
+
+Source code files in the `examples` folder are under the **MIT-0 license**. This allows you to use the examples in your own prop-making projects (or for any other purpose). You are not required to publicly share any changes or additions you make to the examples. You are also not forbidden from sharing if you choose to do so. Please read `examples/LICENSE` for further details, including disclaimers of warranty or liability.
+
+This is mostly of interest if you want to give or sell your prop and its software to other people. In that situation, the compiled binary (firmware) remains under GPL v3, and any changes you make to it must be shared as described in the license. Your specific application code (run by the Lua interpreter) can be shared or kept private under whatever terms you prefer.
+
+Example sound files have their own license terms, usually **Creative Commons Zero**. Details are in `examples/sound_credits.md`. Big thanks to all who share their sound effects under such generous terms.
+
+Utility scripts in the `tools` folder are also under the **MIT-0 license**. Feel free to use or learn from them. Much of it came from online sample code anyway.
+
