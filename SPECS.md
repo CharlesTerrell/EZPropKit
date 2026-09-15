@@ -1,14 +1,14 @@
-# ezpropkit Technical Engineering Specification
+# EZPropKit Technical Engineering Specification
 
 **Document Version:** 1.0.0  
 **Target Platform:** Adafruit RP2040 Prop-Maker Feather (Product ID / SKU 5768)  
-**Author / Maintainer:** ezpropkit core engineering  
+**Author / Maintainer:** EZPropKit core engineering  
 
 ---
 
 ## 1. Executive Summary & Goals
 
-`ezpropkit` is an embedded firmware architecture for the Raspberry Pi RP2040 microcontroller on the Adafruit Prop-Maker Feather board. Its goal is to provide costume prop makers and animatronics designers with the friction-free, drag-and-drop workflow pioneered by CircuitPython, but implemented in **Lua 5.4** coupled with a high-performance bare-metal **C audio/peripheral runtime**.
+**EZPropKit** is an embedded firmware architecture for the Raspberry Pi RP2040 microcontroller on the Adafruit Prop-Maker Feather board. Its goal is to provide costume prop makers and animatronics designers with the friction-free, drag-and-drop workflow pioneered by CircuitPython, but implemented in **Lua 5.4** coupled with a high-performance bare-metal **C audio/peripheral runtime**.
 
 Key objectives:
 * **No Toolchain Required for Makers**: The board presents a USB Mass Storage (MSC) volume labeled `EZPROPKIT`. Users drag and drop Lua scripts (`code.lua` or `main.lua`) and audio files (`.wav`, `.mp3`).
@@ -59,7 +59,7 @@ The board contains 8 Megabytes (8,388,608 bytes) of QSPI Flash. With `board_buil
 0x10000000 +---------------------------------------------------------+ 0.0 MB
            | RP2040 BootROM Stage 2 & Vector Table (256 B)           |
            +---------------------------------------------------------+
-           | ezpropkit Firmware Binary (C Runtime, Lua VM, Decoders) |
+           | EZPropKit Firmware Binary (C Runtime, Lua VM, Decoders) |
            | Allocated / Max Sketch: ~2.0 MB (2,093,056 bytes)       |
            | Current firmware usage: ~338 KB (16.2% of sketch area)  |
 0x101FF000 +---------------------------------------------------------+ ~2.0 MB (_FS_start)
@@ -142,7 +142,7 @@ graph TD
 
 ### 4.2 Inter-Core Communication (IPC) Protocol
 
-Communication between Core 0 and Core 1 uses the RP2040 SIO Hardware FIFOs backed by typed circular queues (`pico/util/queue.h`), defined in [`include/ipc_protocol.h`](file:///home/charlie/Code/ezpropkit/include/ipc_protocol.h):
+Communication between Core 0 and Core 1 uses the RP2040 SIO Hardware FIFOs backed by typed circular queues (`pico/util/queue.h`), defined in [`include/ipc_protocol.h`](include/ipc_protocol.h):
 
 ```c
 typedef enum {
@@ -393,9 +393,9 @@ To prevent permission issues and allow access to project resources and AI assist
 | **platform-raspberrypi** | [maxgerhardt/platform-raspberrypi](https://github.com/maxgerhardt/platform-raspberrypi) | Apache-2.0 | PlatformIO builder platform |
 | **BackgroundAudio** | [earlephilhower/BackgroundAudio](https://github.com/earlephilhower/BackgroundAudio) | GPL-3.0 | Audio streaming library |
 | **libmad MP3** | Incorporated within `BackgroundAudio` | GPL-2.0+ | Fixed-point MP3 decoder engine |
-| **MicroLua / Lua 5.4** | [MicroLua/MicroLua](https://github.com/MicroLua/MicroLua) & Lua.org | MIT License | Lua interpreter and Pico SDK bindings |
+| **Lua 5.4 (PUC-Rio)** | [mischief/arduino-lua](https://github.com/mischief/arduino-lua) & Lua.org | MIT License | Lua 5.4 interpreter and standard libraries |
 | **TinyUSB** | [hathach/tinyusb](https://github.com/hathach/tinyusb) | MIT License | Dual CDC + MSC device stack |
 | **FatFS** | ChaN FatFS | FatFS License (BSD-like) | Flash block file access |
 | **Adafruit LIS3DH** | [adafruit/Adafruit_LIS3DH](https://github.com/adafruit/Adafruit_LIS3DH) | MIT License | Accelerometer driver |
 
-> **License Compliance Notice**: Because `BackgroundAudio` is licensed under GNU GPL-3.0, any pre-compiled composite binary of `ezpropkit` released to users must be distributed under the **GNU General Public License v3.0**. Source code authored natively for `ezpropkit` is kept modular to allow clean separation.
+> **License Compliance Notice**: Because `BackgroundAudio` is licensed under GNU GPL-3.0, any pre-compiled composite binary of **EZPropKit** released to users must be distributed under the **GNU General Public License v3.0**. Source code authored natively for **EZPropKit** is kept modular to allow clean separation.

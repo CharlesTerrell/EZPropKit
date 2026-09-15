@@ -1,6 +1,6 @@
 # Open Source Third-Party Licenses & Compliance Review
 
-This document provides upstream repository links, license types, and copyright notices for all third-party libraries, cores, drivers, and bundled assets referenced or used by **`ezpropkit`**.
+This document provides upstream repository links, license types, and copyright notices for all third-party libraries, cores, drivers, and bundled assets referenced or used by **EZPropKit**.
 
 ---
 
@@ -25,10 +25,10 @@ This document provides upstream repository links, license types, and copyright n
 
 ### Unused / Optional Upstream Components
 
-| Component | Upstream Project | License | Status in ezpropkit |
+| Component | Upstream Project | License | Status in EZPropKit |
 | :--- | :--- | :--- | :--- |
-| **Helix AAC Decoder (`libhelix-aac`)** | RealNetworks | RealNetworks Public Source License 1.0 (`RPSL-1.0`) / RCSL | Bundled in upstream `BackgroundAudio`, but **not compiled / omitted** in `ezpropkit` firmware builds to conserve RP2040 SRAM (~106 KB savings). |
-| **eSpeak-NG (`libespeak-ng`)** | Jonathan Duddington / eSpeak-NG team | GNU General Public License v3.0 (`GPL-3.0-only`) | Bundled in upstream `BackgroundAudio`, but **not linked** in `ezpropkit`. |
+| **Helix AAC Decoder (`libhelix-aac`)** | RealNetworks | RealNetworks Public Source License 1.0 (`RPSL-1.0`) / RCSL | Bundled in upstream `BackgroundAudio`, but **not compiled / omitted** in **EZPropKit** firmware builds to conserve RP2040 SRAM (~106 KB savings). |
+| **eSpeak-NG (`libespeak-ng`)** | Jonathan Duddington / eSpeak-NG team | GNU General Public License v3.0 (`GPL-3.0-only`) | Bundled in upstream `BackgroundAudio`, but **not linked** in **EZPropKit**. |
 | **MicroLua** | Remy Blank ([MicroLua/MicroLua](https://github.com/MicroLua/MicroLua)) | MIT License (`MIT`) | Evaluated during early architecture planning; **not used** in the current build (PUC-Rio Lua 5.4 via `mischief/lua` was chosen instead). |
 
 ---
@@ -40,8 +40,8 @@ This document provides upstream repository links, license types, and copyright n
 * **Authors:** Earle F. Philhower, III (BackgroundAudio, WAV streaming, RP2040 libmad port); Underbit Technologies / Robert Leslie (libmad MP3 decoder).
 * **Licenses:** GNU General Public License v3.0 (`BackgroundAudio`) & GNU General Public License v2.0 or later (`libmad`).
 * **Compliance Requirement**: Because `BackgroundAudio` is licensed under GPLv3 and is statically linked into the firmware image:
-  - **Any pre-compiled binary releases (`.uf2`, `.bin`, `.elf`) of `ezpropkit` must be distributed under the GNU General Public License v3.0 (GPL-3.0)**.
-  - The complete corresponding source code of `ezpropkit` must be made available to anyone receiving the binary, as stipulated by GPLv3 Section 6.
+  - **Any pre-compiled binary releases (`.uf2`, `.bin`, `.elf`) of **EZPropKit** must be distributed under the GNU General Public License v3.0 (GPL-3.0)**.
+  - The complete corresponding source code of **EZPropKit** must be made available to anyone receiving the binary, as stipulated by GPLv3 Section 6.
 
 ### 2.2 Lua 5.4 Core Engine & arduino-lua
 * **Upstream:** [Lua.org](https://www.lua.org/license.html) & [mischief/arduino-lua](https://github.com/mischief/arduino-lua)
@@ -84,7 +84,7 @@ This document provides upstream repository links, license types, and copyright n
 
 ## 3. Project Licensing & Repository Breakdown
 
-The `ezpropkit` project organizes licensing across its repository as follows:
+The **EZPropKit** project organizes licensing across its repository as follows:
 
 ```
 ezpropkit/
@@ -108,10 +108,10 @@ The compiled binary links `BackgroundAudio` (GPLv3), `libmad` (GPLv2+), `arduino
 User scripts executed by the Lua interpreter (placed on the `EZPROPKIT` USB volume) are independent interpretive works. Prop makers may license, distribute, sell, or keep proprietary their custom Lua scripts (`code.lua`) under whatever terms they choose.
 
 ### 3.3 Example Code (`examples/`) & Tools (`tools/`)
-All sample Lua scripts and utility scripts are licensed under **MIT No Attribution (`MIT-0`)** (see [`examples/LICENSE`](file:///home/charlie/Code/ezpropkit-project/ezpropkit/examples/LICENSE) and [`tools/LICENSE`](file:///home/charlie/Code/ezpropkit-project/ezpropkit/tools/LICENSE)). Users may copy, modify, and integrate example scripts into their own projects without attribution or copyleft obligations.
+All sample Lua scripts and utility scripts are licensed under **MIT No Attribution (`MIT-0`)** (see [`examples/LICENSE`](examples/LICENSE) and [`tools/LICENSE`](tools/LICENSE)). Users may copy, modify, and integrate example scripts into their own projects without attribution or copyleft obligations.
 
 ### 3.4 Audio Assets (`examples/`)
-Audio samples bundled in `examples/` are public domain works dedicated under **Creative Commons Zero 1.0 Universal (`CC0-1.0`)**. See [`examples/sound_credits.md`](file:///home/charlie/Code/ezpropkit-project/ezpropkit/examples/sound_credits.md) for individual Freesound credits and source links:
+Audio samples bundled in `examples/` are public domain works dedicated under **Creative Commons Zero 1.0 Universal (`CC0-1.0`)**. See [`examples/sound_credits.md`](examples/sound_credits.md) for individual Freesound credits and source links:
 * `hum.mp3` by chungus43A (CC0)
 * `blaster.wav` by MikeE63 (CC0)
 * `powerup.mp3` by GammaGool (CC0)

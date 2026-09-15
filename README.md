@@ -1,6 +1,6 @@
-# ezpropkit: Lua & C Firmware for Adafruit RP2040 Prop-Maker Feather
+# EZPropKit: Lua & C Firmware for Adafruit RP2040 Prop-Maker Feather
 
-`EZPropKit` is an open-source, dual-core firmware engine designed for rapid prototyping of animatronics and costume props using the **Adafruit RP2040 Prop-Maker Feather**. [More info from Adafruit](https://learn.adafruit.com/adafruit-rp2040-prop-maker-feather) These boards have several useful features included for a reasonably low price (US$20 in 2026). Support for other boards with similar feature sets can be added as needed.
+**EZPropKit** is an open-source, dual-core firmware engine designed for rapid prototyping of animatronics and costume props using the [**Adafruit RP2040 Prop-Maker Feather**](https://learn.adafruit.com/adafruit-rp2040-prop-maker-feather). These boards have several useful features included for a reasonably low price (US$20 in 2026). Support for other boards with similar feature sets can be added as needed.
 
 It delivers a CircuitPython-like workflow using **Lua 5.4**:
 1. Connect the board via USB: it mounts as a standard flash drive named `EZPROPKIT`
@@ -15,7 +15,7 @@ Lua was chosen for the user code interpreter because:
 - Its syntax is easy to learn and read
 - Python has already been done
 
-This project was also intended as a learning exercise in using AI agent workflows. The initial code was planned and implemented by Gemini under the close supervision of the project's creator, a long-time programmer in C-like languages. This workflow allowed the project to go from idea to working prototype in less than a week. There were several informative technical conversations along the way about why certain changes were necessary and which features could fit in the RP2040's limited memory. The human then examined the core source code, fleshed out the Lua examples, and rewrote large parts of the documentation. `AI_POLICY.md` has info about use of AI tools for future contributions.
+This project was also intended as a learning exercise in using AI agent workflows. The initial code was planned and implemented by Gemini under the close supervision of the project's creator, a long-time programmer in C-like languages. This workflow allowed the project to go from idea to working prototype in less than a week. There were several informative technical conversations along the way about why certain changes were necessary and which features could fit in the RP2040's limited memory. The human then examined the core source code, fleshed out the Lua examples, and rewrote parts of the documentation. `AI_POLICY.md` has info about use of AI tools for future contributions.
 
 ---
 
@@ -29,7 +29,7 @@ Compiler Flags: `-O3 -DUSE_TINYUSB`
 | :--- | :--- | :--- |
 | **GPIO 4** | Onboard NeoPixel | Status / safe-mode RGB LED |
 | **GPIO 13** | Onboard Red LED | Standard activity LED |
-| **GPIO 7** | Onboard Button / BOOT | User push button (active low). *Note: The separate hardware BOOTSEL button should not be pressed during normal operation, as it grounds flash CS and suspends code execution.* |
+| **GPIO 7** | Onboard Button / BOOT | User push button (active low). Also used during reset/power-up to enter ROM bootloader mode (`RPI-RP2`). |
 | **GPIO 16** | I2S DIN (Data) | MAX98357A Class-D 3W Audio Amplifier |
 | **GPIO 17** | I2S BCLK (Bit Clock) | Audio bit clock |
 | **GPIO 18** | I2S LRCLK (Word Select)| Audio left/right channel clock |
@@ -51,10 +51,10 @@ Compiler Flags: `-O3 -DUSE_TINYUSB`
 Prop makers do **not** need to compile code or install toolchains. To install:
 
 1. Hold the board's `BOOT` button while plugging it into your computer with a USB cable. Release the button after plugging it in.
-1. The drive `RPI-RP2` appears on your computer. Drag the pre-compiled `ezpropkit-feather-rp2040.uf2` onto the root of `RPI-RP2`. If it doesn't work, check to be sure the cable can handle data and not just charging. Adafruit's [CircuitPython Quickstart](https://learn.adafruit.com/adafruit-rp2040-prop-maker-feather/circuitpython) page has more info about flashing firmware images.
-2. After the firmware image finishes copying, `RPI-RP2` will disappear and be replaced with a drive named `EZPROPKIT`.
-3. Copy (drag-drop or 'cp') your project's sound files (`blast.wav`, `powerup.mp3`) onto the root of `EZPROPKIT`.
-4. Create or edit `code.lua` on EXPROPKIT on EXPROPKIT. For example, this can be found (with the sound files listed above) in `examples/readme-example`:
+2. The drive `RPI-RP2` appears on your computer. Drag the pre-compiled `ezpropkit-feather-rp2040.uf2` (available from the GitHub Releases page) onto the root of `RPI-RP2`. If it doesn't work, check to be sure the cable can handle data and not just charging. Adafruit's [CircuitPython Quickstart](https://learn.adafruit.com/adafruit-rp2040-prop-maker-feather/circuitpython) page has more info about flashing firmware images.
+3. After the firmware image finishes copying, `RPI-RP2` will disappear and be replaced with a drive named `EZPROPKIT`.
+4. Copy (drag-drop or 'cp') your project's sound files (`blaster.wav`, `powerup.mp3`) onto the root of `EZPROPKIT`.
+5. Create or edit `code.lua` on `EZPROPKIT`. For example, this can be found (with the sound files listed above) in `examples/readme-example`:
 
 ```lua
 -- Simple interactive prop example
@@ -84,7 +84,7 @@ while true do
 end
 ```
 
-5. When you save `code.lua`, the board automatically reloads within ~750ms.
+6. When you save `code.lua`, the board automatically reloads within ~2 seconds.
 
 ---
 
@@ -163,7 +163,7 @@ pio device monitor -b 115200
 
 ### Path B: Headless Docker Build (Ideal for CI/CD & consistent environments)
 
-Build the firmware inside a container without installing local toolchains:
+Build the firmware inside a container without installing local toolchains (requires Docker with the `docker-buildx` plugin on Linux hosts, e.g., `sudo apt install docker-buildx`):
 
 ```bash
 docker build -t ezpropkit-builder .
@@ -184,14 +184,15 @@ If running development agents or the Antigravity CLI within Docker:
 
 ## License & Attribution
 
-* **MicroLua** (Lua 5.4 RP2040 port): MIT License ([MicroLua/MicroLua](https://github.com/MicroLua/MicroLua))
+* **Lua 5.4** (PUC-Rio core via mischief/arduino-lua): MIT License ([Lua.org](https://www.lua.org) / [mischief/arduino-lua](https://github.com/mischief/arduino-lua))
 * **BackgroundAudio** (Audio decoders & I2S engine): GNU GPL v3 ([earlephilhower/BackgroundAudio](https://github.com/earlephilhower/BackgroundAudio))
+* **libmad** (MPEG audio decoder): GNU GPL v2+ (Underbit Technologies / Robert Leslie)
 * **arduino-pico** (RP2040 Arduino core): LGPL-2.1 ([earlephilhower/arduino-pico](https://github.com/earlephilhower/arduino-pico))
 * **platform-raspberrypi** (PlatformIO integration): Apache-2.0 ([maxgerhardt/platform-raspberrypi](https://github.com/maxgerhardt/platform-raspberrypi))
 * **TinyUSB** (USB MSC & CDC device stack): MIT License
 * **FatFS** (FAT12/16/32 filesystem library): ChaN FatFS License
 
-Due to the inclusion of `BackgroundAudio` (GPL v3) and `arduino-pico` (statically linked LGPL 2.1), the compiled binary of `ezpropkit` is distributed under the **GNU General Public License v3.0 (GPL-3.0)**. `LICENSE` has the license text. For simplicity the project's source code files are also under GPL v3 with these exceptions:
+Due to the inclusion of `BackgroundAudio` (GPL v3) and `arduino-pico` (statically linked LGPL 2.1), the compiled binary of **EZPropKit** is distributed under the **GNU General Public License v3.0 (GPL-3.0)**. `LICENSE` has the license text. For simplicity the project's source code files are also under GPL v3 with these exceptions:
 
 Source code files in the `examples` folder are under the **MIT-0 license**. This allows you to use the examples in your own prop-making projects (or for any other purpose). You are not required to publicly share any changes or additions you make to the examples. You are also not forbidden from sharing if you choose to do so. Please read `examples/LICENSE` for further details, including disclaimers of warranty or liability.
 
