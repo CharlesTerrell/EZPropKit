@@ -1,0 +1,6 @@
+#!/bin/bash
+
+SRC="${1:-"$(dirname "$0")/../.pio/build/feather_rp2040/firmware.uf2"}"
+ls -lah "$SRC"
+DST="/run/media/$USER/RPI-RP2"
+cp "$SRC" "$DST"

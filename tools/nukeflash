@@ -1,0 +1,10 @@
+#!/bin/bash
+
+# you can get the uf2 image from
+# https://github.com/raspberrypi/pico-sdk-prebuilts
+# but use it only if your board's filesystem is
+# hopelessly corrupt!
+SRC="$(dirname "$0")/nuke_universal.uf2"
+ls -lah "$SRC"
+DST="/run/media/$USER/RPI-RP2"
+cp "$SRC" "$DST"
