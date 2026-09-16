@@ -1,6 +1,7 @@
 #include "lua_engine.h"
 #include "board_config.h"
 #include "ipc_protocol.h"
+#include "core1_engine.h"
 #include "peripheral_mgr.h"
 #include "msc_disk.h"
 #include <FatFS.h>
@@ -151,6 +152,12 @@ static int l_prop_audio_tone(lua_State* L) {
 
     ipc_send_command(&cmd);
     return 0;
+}
+
+static int l_prop_audio_is_playing(lua_State* L) {
+    lua_engine_pump_ipc();
+    lua_pushboolean(L, core1_audio_is_playing() ? 1 : 0);
+    return 1;
 }
 
 // -----------------------------------------------------------------------------
@@ -524,6 +531,7 @@ static void register_prop_api(lua_State* L) {
     lua_pushcfunction(L, l_prop_audio_resume); lua_setfield(L, -2, "resume");
     lua_pushcfunction(L, l_prop_audio_set_volume); lua_setfield(L, -2, "set_volume");
     lua_pushcfunction(L, l_prop_audio_tone); lua_setfield(L, -2, "tone");
+    lua_pushcfunction(L, l_prop_audio_is_playing); lua_setfield(L, -2, "is_playing");
     lua_setfield(L, -2, "audio");
 
     // prop.neopixel

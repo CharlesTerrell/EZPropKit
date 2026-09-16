@@ -12,7 +12,8 @@ print("Starting Blaster Prop...")
 -- Enable 5V boost converter (powers amp, NeoPixels, and servo)
 prop.power.enable()
 
--- Initialize 8-pixel NeoPixel muzzle flash on terminal block (GPIO 21)
+-- Initialize 16-pixel NeoPixel muzzle flash on terminal block (GPIO 21)
+-- (change it to however many LEDs you have)
 local muzzle = prop.neopixel.init(16)
 muzzle:set_brightness(150)
 muzzle:fill(0, 0, 0)
@@ -34,38 +35,54 @@ local function fire_blaster()
     print("PEW! Blaster fired!")
     
     -- Play laser sound effect
-    prop.audio.play("laser.wav", false)
+    prop.audio.play("blaster.wav", false)
     
     -- Muzzle flash: Bright orange/cyan flash
     muzzle:fill(255, 120, 20)
     muzzle:show()
+    prop.time.sleep_ms(60)
     
     -- Kick servo back for recoil
     recoil_servo:angle(45)
     
-    prop.time.sleep_ms(60)
-    
     -- Dim muzzle flash
     muzzle:fill(50, 20, 0)
     muzzle:show()
-    
+    prop.time.sleep_ms(60)
+
     -- Return servo to rest
     recoil_servo:angle(0)
-    
+
     prop.time.sleep_ms(80)
     muzzle:fill(0, 0, 0)
     muzzle:show()
 end
 
+-- track time after firing for hum restart
+local timestamp = prop.time.ticks_ms()
+local humming = true
+
 -- Main prop loop
 while true do
     -- Check if trigger button is pressed
     if prop.button.pressed() then
+        timestamp = prop.time.ticks_ms()
+	humming = false
         fire_blaster()
-        
+
+        -- Let's add a bug! Uncomment the next line and then save:
+        --waka waka
+        -- It should pulse the onboard neopixel red/orange
+        -- and print some debug info to USB serial.
+
         -- Debounce trigger release
         while prop.button.pressed() do
             prop.time.sleep_ms(10)
+        end
+    else
+        if not humming and (prop.time.ticks_ms() - timestamp) > 500 then
+            prop.audio.play("hum.mp3", true)
+	    humming = true
         end
     end
     

@@ -1,3 +1,6 @@
+# see sound_wavs for uncompressed copies,
+# for future codec conversions
+
 # hum.mp3
 60Hz electrical mains hum by chungus43A
 https://freesound.org/s/733737/
