@@ -201,6 +201,8 @@ Run automated hardware verification tests on a connected Adafruit RP2040 Prop-Ma
 pio test -e feather_rp2040
 ```
 
+> See [TESTING.md](TESTING.md) for detailed documentation on the mock architecture, the full list of test cases, and guidelines for adding new tests.
+
 ---
 
 ## License & Attribution
