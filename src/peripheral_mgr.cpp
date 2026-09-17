@@ -64,6 +64,16 @@ void status_pixel_set_rgb(uint8_t r, uint8_t g, uint8_t b) {
     status_pixel->show();
 }
 
+void status_pixel_set_brightness(uint8_t brightness) {
+    if (!status_pixel) {
+        status_pixel = new Adafruit_NeoPixel(1, PIN_ONBOARD_NEOPIXEL, NEO_GRB + NEO_KHZ800);
+        status_pixel->begin();
+    }
+    status_pixel->setBrightness(brightness);
+    status_pixel->show();
+}
+
+
 void status_pixel_pulse_error(void) {
     // Breathing red/orange error beacon
     uint32_t ms = millis();

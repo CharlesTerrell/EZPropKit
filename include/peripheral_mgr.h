@@ -16,7 +16,9 @@ bool power_rail_is_enabled(void);
 void led_set(bool on);
 void led_toggle(void);
 void status_pixel_set_rgb(uint8_t r, uint8_t g, uint8_t b);
+void status_pixel_set_brightness(uint8_t brightness);
 void status_pixel_pulse_error(void);
+
 
 // External NeoPixel Strip (Lazy Initialized)
 bool neopixel_init(uint16_t num_pixels, uint8_t pin);

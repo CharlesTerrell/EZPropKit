@@ -250,6 +250,22 @@ static int l_prop_status_pixel_set(lua_State* L) {
     return 0;
 }
 
+static int l_prop_status_pixel_off(lua_State* L) {
+    (void)L;
+    status_pixel_set_rgb(0, 0, 0);
+    return 0;
+}
+
+static int l_prop_status_pixel_set_brightness(lua_State* L) {
+    int b = (int)luaL_checkinteger(L, 1);
+    if (b < 0) b = 0;
+    if (b > 255) b = 255;
+    status_pixel_set_brightness((uint8_t)b);
+    return 0;
+}
+
+
+
 // -----------------------------------------------------------------------------
 // Lua C API Bindings: prop.servo
 // -----------------------------------------------------------------------------
@@ -530,6 +546,7 @@ static void register_prop_api(lua_State* L) {
     lua_pushcfunction(L, l_prop_audio_pause); lua_setfield(L, -2, "pause");
     lua_pushcfunction(L, l_prop_audio_resume); lua_setfield(L, -2, "resume");
     lua_pushcfunction(L, l_prop_audio_set_volume); lua_setfield(L, -2, "set_volume");
+    lua_pushcfunction(L, l_prop_audio_set_volume); lua_setfield(L, -2, "volume");
     lua_pushcfunction(L, l_prop_audio_tone); lua_setfield(L, -2, "tone");
     lua_pushcfunction(L, l_prop_audio_is_playing); lua_setfield(L, -2, "is_playing");
     lua_setfield(L, -2, "audio");
@@ -540,13 +557,21 @@ static void register_prop_api(lua_State* L) {
     lua_pushcfunction(L, l_prop_neopixel_set); lua_setfield(L, -2, "set");
     lua_pushcfunction(L, l_prop_neopixel_fill); lua_setfield(L, -2, "fill");
     lua_pushcfunction(L, l_prop_neopixel_set_brightness); lua_setfield(L, -2, "set_brightness");
+    lua_pushcfunction(L, l_prop_neopixel_set_brightness); lua_setfield(L, -2, "brightness");
     lua_pushcfunction(L, l_prop_neopixel_show); lua_setfield(L, -2, "show");
     lua_pushcfunction(L, l_prop_neopixel_clear); lua_setfield(L, -2, "clear");
     lua_setfield(L, -2, "neopixel");
 
-    // prop.status_pixel
+    // prop.status_pixel (and prop.pixel alias)
     lua_newtable(L);
     lua_pushcfunction(L, l_prop_status_pixel_set); lua_setfield(L, -2, "set");
+    lua_pushcfunction(L, l_prop_status_pixel_set); lua_setfield(L, -2, "rgb");
+    lua_pushcfunction(L, l_prop_status_pixel_off); lua_setfield(L, -2, "off");
+    lua_pushcfunction(L, l_prop_status_pixel_off); lua_setfield(L, -2, "clear");
+    lua_pushcfunction(L, l_prop_status_pixel_set_brightness); lua_setfield(L, -2, "set_brightness");
+    lua_pushcfunction(L, l_prop_status_pixel_set_brightness); lua_setfield(L, -2, "brightness");
+    lua_pushvalue(L, -1);
+    lua_setfield(L, -3, "pixel");
     lua_setfield(L, -2, "status_pixel");
 
     // prop.servo

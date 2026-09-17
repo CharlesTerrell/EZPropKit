@@ -301,8 +301,11 @@ strip:set_brightness(0..100)     -- Global brightness scaling
 strip:show()                     -- Transmits frame via PIO DMA
 strip:clear()                    -- Sets all to 0 and transmits
 
--- Onboard Status NeoPixel
-prop.status_pixel.set(r, g, b)   -- Directly controls GPIO 4 onboard NeoPixel
+-- Onboard Status NeoPixel (GPIO 4)
+prop.status_pixel.set(r, g, b)            -- Directly controls GPIO 4 onboard NeoPixel (alias: prop.pixel.set)
+prop.status_pixel.set_brightness(0..255)  -- Scales status pixel brightness (alias: prop.pixel.brightness)
+prop.status_pixel.off()                   -- Turns off onboard status NeoPixel (alias: prop.pixel.off, clear)
+
 
 -- Hobby Servos (PWM)
 local servo = prop.servo.init([pin=20], [min_us=500], [max_us=2500])

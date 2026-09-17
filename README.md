@@ -105,6 +105,10 @@ All hardware peripherals are lazily initialized on first access:
   * `strip:fill(r, g, b)`: Fills all pixels.
   * `strip:show()`: Transmits buffer via PIO DMA.
   * `strip:clear()`: Clears all pixels and sends update.
+* **`prop.status_pixel`** (or **`prop.pixel`**):
+  * `prop.status_pixel.set(r, g, b)` (or `.rgb(r, g, b)`): Sets RGB color (0..255) of the built-in status NeoPixel (GPIO 4).
+  * `prop.status_pixel.set_brightness(0..255)` (or `.brightness(0..255)`): Scales the brightness of the status NeoPixel.
+  * `prop.status_pixel.off()` (or `.clear()`): Turns off the status NeoPixel.
 * **`prop.servo`**:
   * `s = prop.servo.init([pin=20], [min_us=500], [max_us=2500])`: Configures PWM slice.
   * `s:angle(degrees)`: Positions servo between 0° and 180°.
@@ -179,6 +183,23 @@ If running development agents or the Antigravity CLI within Docker:
 * Mount your project directory: `-v $(pwd):/workspace`
 * Mount your auth tokens read-only: `-v ~/.gemini:/root/.gemini:ro`
 * *Note on USB serial on macOS/Windows*: Docker Desktop runs inside a VM and cannot natively pass host USB serial ports without third-party USB-over-IP daemons (`usbipd`). Use native PlatformIO on the host for real-time serial streaming, and use Docker for reproducible compilation and CI.
+
+### Running Unit & Hardware Tests
+
+EZPropKit uses PlatformIO and the Unity test framework to support both host-native unit testing (offline, no physical board required) and on-target embedded testing (on connected RP2040 hardware):
+
+#### Host-Native Unit Tests (Offline)
+Run native unit tests directly on your development machine (Linux/macOS):
+```bash
+pio test -e native
+```
+This tests the IPC queues, peripheral manager logic, Lua engine lifecycle, and Lua API bindings against mock hardware in ~1-2 seconds.
+
+#### On-Target Embedded Tests (Hardware)
+Run automated hardware verification tests on a connected Adafruit RP2040 Prop-Maker Feather:
+```bash
+pio test -e feather_rp2040
+```
 
 ---
 

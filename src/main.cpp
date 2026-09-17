@@ -52,6 +52,7 @@ static void reload_script(void) {
 
 static uint32_t boot_stabilize_until_ms = 0;
 
+#ifndef UNIT_TEST
 void setup() {
     // 0. Immediately hold 5V boost converter OFF and clamp I2S lines LOW
     // to put MAX98357A in hardware shutdown and prevent startup static/crackle
@@ -134,3 +135,5 @@ void loop() {
 
     delay(2);
 }
+#endif
+
