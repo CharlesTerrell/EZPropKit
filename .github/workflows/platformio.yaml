@@ -1,0 +1,105 @@
+name: PlatformIO CI & Rolling Pre-Release
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'src/**'
+      - 'include/**'
+      - 'test/**'
+      - 'platformio.ini'
+      - '.github/workflows/platformio.yaml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'src/**'
+      - 'include/**'
+      - 'test/**'
+      - 'platformio.ini'
+      - '.github/workflows/platformio.yaml'
+  # Weekly health check (Sundays at 03:00 UTC) to verify external git dependencies
+  schedule:
+    - cron: '0 3 * * 0'
+  # Enables the "Run workflow" button in the GitHub Actions tab
+  workflow_dispatch:
+
+# Cancel in-progress builds if a newer commit is pushed to the same branch or PR
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# Grant permissions to create and update GitHub Releases
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout repository
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Set up Python (3.11 is pre-cached on the runner)
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # 3. Cache dependencies (packages, toolchains, git repos)
+      - name: Cache PlatformIO
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.platformio/.cache
+            ~/.platformio/packages
+            ~/.platformio/platforms
+          key: ${{ runner.os }}-pio-${{ hashFiles('**/platformio.ini') }}
+          restore-keys: |
+            ${{ runner.os }}-pio-
+
+      # 4. Install PlatformIO Core
+      - name: Install PlatformIO Core
+        run: pip install --upgrade platformio
+
+      # 5. Run the 19 host-native unit tests (< 1 second)
+      - name: Run Host-Native Unit Tests
+        run: pio test -e native
+
+      # 6. Build target firmware for RP2040 Prop-Maker Feather
+      - name: Build RP2040 Firmware
+        run: pio run -e feather_rp2040
+
+      # 7. Give the binary a descriptive filename matching the README
+      - name: Prepare Binary
+        run: cp .pio/build/feather_rp2040/firmware.uf2 ezpropkit-feather-rp2040.uf2
+
+      # 8. Upload Actions artifact (useful for inspecting PR builds)
+      - name: Upload Actions Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ezpropkit-feather-rp2040-firmware
+          path: ezpropkit-feather-rp2040.uf2
+
+      # 9. Update the Rolling Pre-Release (Only runs on pushes to main or manual dispatch)
+      - name: Publish Rolling Pre-Release
+        if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: continuous
+          name: "Continuous Build (Bleeding Edge)"
+          prerelease: true
+          make_latest: false
+          body: |
+            Automated rolling pre-release built from the latest commit on `main`.
+
+            * **Commit**: `${{ github.sha }}`
+            * **Build Date**: `${{ github.event.head_commit.timestamp || 'Manual Trigger' }}`
+
+            ### Installation
+            1. Hold `BOOT` and plug your Prop-Maker Feather into USB.
+            2. Drag `ezpropkit-feather-rp2040.uf2` directly onto the `RPI-RP2` drive.
+          files: |
+            ezpropkit-feather-rp2040.uf2
